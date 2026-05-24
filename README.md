@@ -2,7 +2,7 @@
 
 סוכן AI שעוזר לבני נוער לדייק רעיונות, למצוא מחקרים מהרשת, ולקבל ייעוץ בגובה העיניים.
 
-בנוי על Next.js 15, React 19, Tailwind CSS, ו-Claude API עם web search מובנה.
+בנוי על Next.js 15, React 19, Tailwind CSS, ו-DeepSeek API (זול ואיכותי). Web search אופציונלי דרך Tavily.
 
 ## הרצה מקומית
 
@@ -12,7 +12,8 @@ npm install
 
 # 2. קונפיגורציה
 cp .env.example .env.local
-# הוסף את ה-ANTHROPIC_API_KEY שלך מ-https://console.anthropic.com/
+# הוסף את ה-DEEPSEEK_API_KEY שלך מ-https://platform.deepseek.com/
+# (אופציונלי) הוסף TAVILY_API_KEY ל-web search חינמי מ-https://tavily.com/
 
 # 3. הפעלה
 npm run dev
@@ -24,7 +25,7 @@ npm run dev
 
 1. דחוף את הריפו ל-GitHub
 2. ב-[vercel.com/new](https://vercel.com/new), חבר את הריפו
-3. הוסף את משתנה הסביבה `ANTHROPIC_API_KEY` בהגדרות הפרויקט
+3. הוסף את משתנה הסביבה `DEEPSEEK_API_KEY` בהגדרות הפרויקט (ואופציונלית `TAVILY_API_KEY`)
 4. Deploy
 
 או דרך CLI:
@@ -32,7 +33,7 @@ npm run dev
 ```bash
 npm i -g vercel
 vercel
-vercel env add ANTHROPIC_API_KEY
+vercel env add DEEPSEEK_API_KEY
 vercel --prod
 ```
 
@@ -40,8 +41,9 @@ vercel --prod
 
 | שם | תיאור | חובה |
 |----|------|------|
-| `ANTHROPIC_API_KEY` | מפתח Claude API | כן |
-| `ANTHROPIC_MODEL` | מודל (ברירת מחדל: `claude-sonnet-4-5`) | לא |
+| `DEEPSEEK_API_KEY` | מפתח DeepSeek API | כן |
+| `DEEPSEEK_MODEL` | `deepseek-chat` (V3, מהיר) או `deepseek-reasoner` (R1, חושב לעומק) | לא |
+| `TAVILY_API_KEY` | מפתח Tavily להפעלת web search (free 1000/חודש) | לא |
 
 ## מבנה הפרויקט
 
@@ -57,13 +59,14 @@ components/
   MessageBubble.tsx    # הודעה בודדת (Markdown + ציטוטים)
   Composer.tsx         # שורת הקלט בתחתית
 lib/
-  anthropic.ts         # client + הגדרת המודל
+  llm.ts               # DeepSeek client (OpenAI-compatible)
+  web-search.ts        # אינטגרציה אופציונלית עם Tavily
   system-prompt.ts     # האישיות והסקילים של דייק
 ```
 
 ## התאמה אישית
 
 - **שינוי האישיות**: ערוך את `lib/system-prompt.ts`
-- **שינוי המודל**: הגדר `ANTHROPIC_MODEL` ב-env (למשל `claude-opus-4-5`)
+- **שינוי המודל**: הגדר `DEEPSEEK_MODEL=deepseek-reasoner` ל-R1 (חושב יותר לעומק)
 - **שינוי עיצוב**: הצבעים ב-`tailwind.config.ts` תחת `colors.brand`
 - **שינוי הצעות במסך הבית**: עדכן את `SUGGESTIONS` ב-`components/SearchHero.tsx`
